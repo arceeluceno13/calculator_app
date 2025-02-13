@@ -49,22 +49,37 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       Parser p = Parser();
       Expression exp = p.parse(expression);
       ContextModel cm = ContextModel();
-      return exp.evaluate(EvaluationType.REAL, cm).toString();
+      double evalResult = exp.evaluate(EvaluationType.REAL, cm);
+      // Remove decimal point if the result is an integer
+      if (evalResult == evalResult.roundToDouble()) {
+        return evalResult.round().toString();
+      } else {
+        return evalResult.toString();
+      }
     } catch (e) {
       return 'Error';
     }
   }
 
-  Widget buildButton(String text, {Color color = Colors.grey}) {
+  Widget buildButton(String text, {Color color = Colors.white}) {
     return Expanded(
       child: ElevatedButton(
         onPressed: () => onButtonClick(text),
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.all(20),
           backgroundColor: color,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
-        child: Text(text, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black, // Text color for buttons
+          ),
+        ),
       ),
     );
   }
@@ -80,7 +95,13 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             child: Container(
               alignment: Alignment.bottomRight,
               padding: EdgeInsets.all(20),
-              child: Text(input.isEmpty ? '0' : input, style: TextStyle(fontSize: 40, color: Colors.white)),
+              child: Text(
+                input.isEmpty ? '0' : input,
+                style: TextStyle(
+                  fontSize: 40,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ),
           Expanded(
@@ -88,11 +109,18 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             child: Container(
               alignment: Alignment.bottomRight,
               padding: EdgeInsets.all(20),
-              child: Text(result, style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: Colors.green)),
+              child: Text(
+                result,
+                style: TextStyle(
+                  fontSize: 50,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ),
           Expanded(
-            flex: 6,
+            flex: 2,
             child: Column(
               children: [
                 buildRow(['7', '8', '9', '÷']),
@@ -110,7 +138,10 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   Widget buildRow(List<String> buttons) {
     return Expanded(
       child: Row(
-        children: buttons.map((btn) => buildButton(btn, color: btn == '=' ? Colors.orange : Colors.grey[800]!)).toList(),
+        children: buttons.map((btn) {
+          Color buttonColor = btn == '=' ? Colors.orange : Colors.white;
+          return buildButton(btn, color: buttonColor);
+        }).toList(),
       ),
     );
   }
